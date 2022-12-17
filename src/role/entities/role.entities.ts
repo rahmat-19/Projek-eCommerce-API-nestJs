@@ -1,7 +1,7 @@
-import { BaseEntity, OneToOne, Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { OneToOne, Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Entity } from "typeorm";
 
-
-export class Role extends BaseEntity {
+@Entity()
+export class Role{
     @PrimaryGeneratedColumn('uuid')
     id: string;
 

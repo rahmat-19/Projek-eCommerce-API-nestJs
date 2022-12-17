@@ -9,10 +9,13 @@ import {
   PrimaryColumn,
   BeforeInsert,
   OneToOne,
-  JoinColumn
+  JoinColumn,
+  ManyToOne
 } from 'typeorm';
 
 import * as bcrypt from 'bcrypt'
+import { text } from 'stream/consumers';
+import { Role } from 'src/role/entities/role.entities';
 
 
 @Entity()
@@ -21,7 +24,7 @@ export class User {
   id: string;
 
   @PrimaryColumn()
-  nis: number;
+  nis: string;
 
   @Column()
   firstName: string;
@@ -29,11 +32,24 @@ export class User {
   @Column()
   lastName: string;
 
+  @Column({
+    nullable: true,
+  })
+  jurusan: string;
+
+  @Column({
+    type: 'text',
+    nullable: true
+  })
+  password: string;
+
+  @Column({
+    nullable: true,
+  })
+  salt: string;
+
   @Column({ default: true })
   isActive: boolean;
-
-  @Column()
-  password: string;
 
   @CreateDateColumn({
     type: 'timestamp with time zone',
@@ -53,13 +69,21 @@ export class User {
   })
   deletedAt: Date;
 
-  @BeforeInsert()
-    async setPassword(password: string) {
-
-        const salt = bcrypt.genSaltSync();
-        this.password = bcrypt.hashSync(password || this.password, salt);
-    }
+  // @BeforeInsert()
+  //   async setPassword(password: string) {
+  //     this.password = bcrypt.hashSync(password || this.password, this.salt);
+  //   }
 
   @VersionColumn()
   version: number;
+
+  @ManyToOne(
+    () => {
+      return Role;
+    },
+    (role) => {
+      return role.id;
+    },
+  )
+  role: Role;
 }

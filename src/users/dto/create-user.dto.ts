@@ -6,4 +6,13 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   lastName: string;
+
+  @IsNotEmpty()
+  nis: string;
+
+  @IsNotEmpty()
+  password: string;
+
+  @IsNotEmpty()
+  isActive: boolean;
 }
