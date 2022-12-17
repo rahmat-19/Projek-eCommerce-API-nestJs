@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { LoggerModule } from 'nestjs-pino';
 import { HealthModule } from './health/health.module';
+import { RoleModule } from './role/role.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -75,6 +76,7 @@ import configuration from './config/configuration';
     }),
     UsersModule,
     HealthModule,
+    RoleModule,
   ],
 })
 export class AppModule {}
