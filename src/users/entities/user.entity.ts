@@ -77,13 +77,7 @@ export class User {
   @VersionColumn()
   version: number;
 
-  @ManyToOne(
-    () => {
-      return Role;
-    },
-    (role) => {
-      return role.id;
-    },
-  )
-  role: Role;
+  @ManyToOne(() => Role, (role) => role.users)
+  role: Role
+
 }

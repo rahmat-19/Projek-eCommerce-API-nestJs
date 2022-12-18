@@ -1,4 +1,5 @@
-import { OneToOne, Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Entity } from "typeorm";
+import { User } from "src/users/entities/user.entity";
+import { OneToOne, Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Entity, OneToMany } from "typeorm";
 
 @Entity()
 export class Role{
@@ -7,6 +8,9 @@ export class Role{
 
     @Column()
     name: string
+
+    @OneToMany(() => User, (user) => user.role)
+    users: User[]
 
     @CreateDateColumn({
         type: 'timestamp with time zone',
