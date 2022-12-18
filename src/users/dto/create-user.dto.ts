@@ -27,6 +27,5 @@ export class CreateUserDto {
   role: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   isActive: boolean;
 }

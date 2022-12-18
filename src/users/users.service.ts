@@ -21,6 +21,8 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    console.log(createUserDto);
+
     const checkNis = await this.usersRepository.findOne({
       where: {
         nis: createUserDto.nis,
@@ -54,12 +56,14 @@ export class UsersService {
       where: {
         id: result.identifiers[0].id,
       },
-      relations: ['department']
+      relations: ['department', 'role']
     });
   }
 
   findAll() {
-    return this.usersRepository.findAndCount();
+    return this.usersRepository.findAndCount({
+      relations: ['department', 'role']
+    });
   }
 
   async findOne(id: string) {
@@ -68,6 +72,7 @@ export class UsersService {
         where: {
           id,
         },
+        relations : ['department', 'role']
       });
     } catch (e) {
       if (e instanceof EntityNotFoundError) {
@@ -84,35 +89,37 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    try {
-      await this.usersRepository.findOneOrFail({
-        where: {
-          id,
-        },
-      });
-    } catch (e) {
-      if (e instanceof EntityNotFoundError) {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.NOT_FOUND,
-            error: 'Data not found',
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      } else {
-        throw e;
-      }
-    }
+  // async update(id: string, updateUserDto: UpdateUserDto) {
+  //   try {
+  //     await this.usersRepository.findOneOrFail({
+  //       where: {
+  //         id,
+  //       },
 
-    await this.usersRepository.update(id, updateUserDto);
+  //        relations : ['department', 'role']
+  //     });
+  //   } catch (e) {
+  //     if (e instanceof EntityNotFoundError) {
+  //       throw new HttpException(
+  //         {
+  //           statusCode: HttpStatus.NOT_FOUND,
+  //           error: 'Data not found',
+  //         },
+  //         HttpStatus.NOT_FOUND,
+  //       );
+  //     } else {
+  //       throw e;
+  //     }
+  //   }
 
-    return this.usersRepository.findOneOrFail({
-      where: {
-        id,
-      },
-    });
-  }
+  //   await this.usersRepository.update(id, updateUserDto);
+
+  //   return this.usersRepository.findOneOrFail({
+  //     where: {
+  //       id,
+  //     },
+  //   });
+  // }
 
   async remove(id: string) {
     try {
