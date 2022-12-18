@@ -65,11 +65,6 @@ export class User {
   })
   deletedAt: Date;
 
-  // @BeforeInsert()
-  //   async setPassword(password: string) {
-  //     this.password = bcrypt.hashSync(password || this.password, this.salt);
-  //   }
-
   @VersionColumn()
   version: number;
 

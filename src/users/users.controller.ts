@@ -47,17 +47,17 @@ export class UsersController {
     };
   }
 
-  @Put(':id')
-  async update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return {
-      data: await this.usersService.update(id, updateUserDto),
-      statusCode: HttpStatus.OK,
-      message: 'success',
-    };
-  }
+  // @Put(':id')
+  // async update(
+  //   @Param('id', ParseUUIDPipe) id: string,
+  //   @Body() updateUserDto: UpdateUserDto,
+  // ) {
+  //   return {
+  //     data: await this.usersService.update(id, updateUserDto),
+  //     statusCode: HttpStatus.OK,
+  //     message: 'success',
+  //   };
+  // }
 
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {

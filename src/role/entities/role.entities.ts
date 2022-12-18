@@ -9,9 +9,6 @@ export class Role{
     @Column()
     name: string
 
-    @OneToMany(() => User, (user) => user.role)
-    users: User[]
-
     @CreateDateColumn({
         type: 'timestamp with time zone',
         nullable: false,

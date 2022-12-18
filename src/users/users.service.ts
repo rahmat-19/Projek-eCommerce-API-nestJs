@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as uuid from 'uuid';
 import { hashPassword } from 'src/utils/hash-password';
 import { Department } from './entities/department.entity';
+import { Role } from 'src/role/entities/role.entities';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,8 @@ export class UsersService {
     private usersRepository: Repository<User>,
     @InjectRepository(Department)
     private departmentRepository: Repository<Department>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -23,7 +26,7 @@ export class UsersService {
         nis: createUserDto.nis,
       }
     });
-    
+
     if(checkNis) {
       throw new HttpException(
         {
@@ -43,6 +46,7 @@ export class UsersService {
     user.password = await hashPassword(createUserDto.password, salt)
     user.salt = salt
     user.department = await this.departmentRepository.findOneOrFail({where: {code: createUserDto.jurusan}})
+    user.role = await this.roleRepository.findOneOrFail({where: {id: createUserDto.role}})
 
     const result = await this.usersRepository.insert(user)
 
