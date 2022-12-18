@@ -73,7 +73,6 @@ export class User {
   @VersionColumn()
   version: number;
 
-<<<<<<< HEAD
   @ManyToOne(
     () => {
       return Role;
@@ -93,9 +92,4 @@ export class User {
     }
   )
   department: Department;
-=======
-  @ManyToOne(() => Role, (role) => role.users)
-  role: Role
-
->>>>>>> f42e3316eafabaf212e5c7e758d52500f3f29f67
 }
