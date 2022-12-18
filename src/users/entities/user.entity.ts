@@ -7,14 +7,9 @@ import {
   VersionColumn,
   CreateDateColumn,
   PrimaryColumn,
-  BeforeInsert,
-  OneToOne,
-  JoinColumn,
   ManyToOne
 } from 'typeorm';
 
-import * as bcrypt from 'bcrypt'
-import { text } from 'stream/consumers';
 import { Role } from 'src/role/entities/role.entities';
 import { Department } from './department.entity';
 
@@ -47,6 +42,26 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
+  @ManyToOne(
+    () => {
+      return Role;
+    },
+    (role) => {
+      return role.id;
+    },
+  )
+  role: Role;
+
+  @ManyToOne(
+    () => {
+      return Department;
+    },
+    (department) => {
+      return department.code
+    }
+  )
+  department: Department;
+
   @CreateDateColumn({
     type: 'timestamp with time zone',
     nullable: false,
@@ -67,24 +82,4 @@ export class User {
 
   @VersionColumn()
   version: number;
-
-  @ManyToOne(
-    () => {
-      return Role;
-    },
-    (role) => {
-      return role.id;
-    },
-  )
-  role: Role;
-
-  @ManyToOne(
-    () => {
-      return Department;
-    },
-    (department) => {
-      return department.code
-    }
-  )
-  department: Department;
 }

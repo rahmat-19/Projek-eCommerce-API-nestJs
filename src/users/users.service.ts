@@ -21,6 +21,8 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    console.log(createUserDto);
+
     const checkNis = await this.usersRepository.findOne({
       where: {
         nis: createUserDto.nis,
@@ -59,7 +61,9 @@ export class UsersService {
   }
 
   findAll() {
-    return this.usersRepository.findAndCount();
+    return this.usersRepository.findAndCount({
+      relations: ['department', 'role']
+    });
   }
 
   async findOne(id: string) {
@@ -68,6 +72,7 @@ export class UsersService {
         where: {
           id,
         },
+        relations : ['department', 'role']
       });
     } catch (e) {
       if (e instanceof EntityNotFoundError) {
@@ -84,6 +89,7 @@ export class UsersService {
     }
   }
 
+<<<<<<< HEAD
   async update(id: string, updateUserDto:UpdateUserDto) {
     try {      
       await this.usersRepository.findOneOrFail({
@@ -121,6 +127,39 @@ export class UsersService {
       relations: ['department', 'role']
     });
   }
+=======
+  // async update(id: string, updateUserDto: UpdateUserDto) {
+  //   try {
+  //     await this.usersRepository.findOneOrFail({
+  //       where: {
+  //         id,
+  //       },
+
+  //        relations : ['department', 'role']
+  //     });
+  //   } catch (e) {
+  //     if (e instanceof EntityNotFoundError) {
+  //       throw new HttpException(
+  //         {
+  //           statusCode: HttpStatus.NOT_FOUND,
+  //           error: 'Data not found',
+  //         },
+  //         HttpStatus.NOT_FOUND,
+  //       );
+  //     } else {
+  //       throw e;
+  //     }
+  //   }
+
+  //   await this.usersRepository.update(id, updateUserDto);
+
+  //   return this.usersRepository.findOneOrFail({
+  //     where: {
+  //       id,
+  //     },
+  //   });
+  // }
+>>>>>>> 3c7f395174955728a598ae6a3515ef74e4502c1c
 
   async remove(id: string) {
     try {
