@@ -7,7 +7,7 @@ export class Role{
     id: string;
 
     @Column()
-    name: string
+    name: string;
 
     @CreateDateColumn({
         type: 'timestamp with time zone',

@@ -45,8 +45,8 @@ export class UsersService {
     user.isActive = createUserDto.isActive
     user.password = await hashPassword(createUserDto.password, salt)
     user.salt = salt
-    user.department = await this.departmentRepository.findOneOrFail({where: {code: createUserDto.jurusan}})
-    user.role = await this.roleRepository.findOneOrFail({where: {id: createUserDto.role}})
+    user.department = await this.departmentRepository.findOne({where: {code: createUserDto.jurusan}})
+    user.role = await this.roleRepository.findOne({where: {id: createUserDto.roles}})
 
     const result = await this.usersRepository.insert(user)
 
@@ -54,7 +54,7 @@ export class UsersService {
       where: {
         id: result.identifiers[0].id,
       },
-      relations: ['department']
+      relations: ['department', 'role']
     });
   }
 
@@ -84,8 +84,8 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    try {
+  async update(id: string, updateUserDto:UpdateUserDto) {
+    try {      
       await this.usersRepository.findOneOrFail({
         where: {
           id,
@@ -105,12 +105,20 @@ export class UsersService {
       }
     }
 
-    await this.usersRepository.update(id, updateUserDto);
+    const salt = uuid.v4();
+    const user = new User();
+    user.firstName =  updateUserDto.firstName
+    user.lastName = updateUserDto.lastName
+    user.isActive = updateUserDto.isActive
+    user.department = await this.departmentRepository.findOne({where: {code: updateUserDto.jurusan}})
+    user.role = await this.roleRepository.findOne({where: {id: updateUserDto.roles}})
+    await this.usersRepository.update(id, user);
 
     return this.usersRepository.findOneOrFail({
       where: {
         id,
       },
+      relations: ['department', 'role']
     });
   }
 
