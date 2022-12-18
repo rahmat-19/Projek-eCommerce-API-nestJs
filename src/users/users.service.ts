@@ -6,12 +6,15 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as uuid from 'uuid';
 import { hashPassword } from 'src/utils/hash-password';
+import { Department } from './entities/department.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Department)
+    private departmentRepository: Repository<Department>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -30,7 +33,7 @@ export class UsersService {
         HttpStatus.NOT_FOUND,
       );
     }
-    
+
     const salt = uuid.v4();
     const user = new User();
     user.firstName =  createUserDto.firstName
@@ -39,6 +42,7 @@ export class UsersService {
     user.isActive = createUserDto.isActive
     user.password = await hashPassword(createUserDto.password, salt)
     user.salt = salt
+    user.department = await this.departmentRepository.findOneOrFail({where: {code: createUserDto.jurusan}})
 
     const result = await this.usersRepository.insert(user)
 
@@ -46,6 +50,7 @@ export class UsersService {
       where: {
         id: result.identifiers[0].id,
       },
+      relations: ['department']
     });
   }
 

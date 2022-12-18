@@ -16,6 +16,7 @@ import {
 import * as bcrypt from 'bcrypt'
 import { text } from 'stream/consumers';
 import { Role } from 'src/role/entities/role.entities';
+import { Department } from './department.entity';
 
 
 @Entity()
@@ -31,11 +32,6 @@ export class User {
 
   @Column()
   lastName: string;
-
-  @Column({
-    nullable: true,
-  })
-  jurusan: string;
 
   @Column({
     type: 'text',
@@ -86,4 +82,14 @@ export class User {
     },
   )
   role: Role;
+
+  @ManyToOne(
+    () => {
+      return Department;
+    },
+    (department) => {
+      return department.code
+    }
+  )
+  department: Department;
 }
