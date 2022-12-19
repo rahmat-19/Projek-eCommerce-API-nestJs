@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, HttpStatus, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpStatus, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
 import { CretaeInventoryDto } from './dto/create-inventorys.dto';
+import { UpdateInventoryDto } from './dto/update-inventorys.dto';
 import { InventorysService } from './inventorys.service';
 
 @Controller('inventorys')
@@ -15,6 +16,18 @@ export class InventorysController {
         };
     }
 
+    @Put(':id')
+    async update(
+        @Param('id', ParseUUIDPipe) id: string,
+        @Body() updateInventoryDto: UpdateInventoryDto,
+    ) {
+        return {
+            data: await this.inventorysService.update(id, updateInventoryDto),
+            statusCode: HttpStatus.OK,
+            massage: 'success',
+        };
+    }
+
     @Delete(':id')
     async remove(@Param('id', ParseUUIDPipe) id: string) {
         await this.inventorysService.remove(id);
@@ -24,4 +37,5 @@ export class InventorysController {
             message: 'success',
         };
     }
+
 }

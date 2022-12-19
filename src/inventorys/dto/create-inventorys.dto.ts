@@ -15,7 +15,7 @@ export class CretaeInventoryDto {
 
     @ApiProperty()
     @IsNotEmpty()
-    stok
+    stok: number
 
     @ApiProperty()
     @IsNotEmpty()

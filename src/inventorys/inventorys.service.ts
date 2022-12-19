@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Department } from 'src/users/entities/department.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { CretaeInventoryDto } from './dto/create-inventorys.dto';
+import { UpdateInventoryDto } from './dto/update-inventorys.dto';
 import { Inventory } from './entities/inventorys.entitiy';
 
 @Injectable()
@@ -29,7 +30,46 @@ export class InventorysService {
         where: {
             id: result.identifiers[0].id,
         },
-        relations: ['department']
+            relations: ['department']
+        });
+    }
+
+    async update(id: string, updateInventoryDto: UpdateInventoryDto) {
+        try {
+            await this.inventorysRepository.findOneOrFail({
+                where: {
+                    id,
+                },
+            });
+        } catch (e) {
+            if (e instanceof EntityNotFoundError) {
+                throw new HttpException(
+                    {
+                    statusCode: HttpStatus.NOT_FOUND,
+                    error: 'Data Not Found'
+                    },
+                    HttpStatus.NOT_FOUND,
+                );
+            } else {
+                throw e
+            }
+        }
+
+        const inventory = new Inventory();
+        inventory.name = updateInventoryDto.name;
+        inventory.description = updateInventoryDto.description;
+        inventory.stok = updateInventoryDto.stok;
+        inventory.visibility = updateInventoryDto.visibility;
+        if (inventory.department) {
+            inventory.department = await this.departmentRepository.findOne({where: {code: updateInventoryDto.jurusan}});
+        }
+        await this.inventorysRepository.update(id, inventory);
+
+        return this.inventorysRepository.findOneOrFail({
+        where: {
+            id,
+        },
+            relations: ['department']
         });
     }
 
