@@ -6,28 +6,25 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as uuid from 'uuid';
 import { hashPassword } from 'src/utils/hash-password';
-import { Department } from './entities/department.entity';
-import { Role } from 'src/role/entities/role.entities';
+import { Role } from './entities/role.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    @InjectRepository(Department)
-    private departmentRepository: Repository<Department>,
     @InjectRepository(Role)
-    private roleRepository: Repository<Role>,
+    private rolesRepository: Repository<Role>
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const checkNis = await this.usersRepository.findOne({
+    const checkEmail = await this.usersRepository.findOne({
       where: {
-        nis: createUserDto.nis,
+        phone: createUserDto.email,
       }
     });
 
-    if(checkNis) {
+    if(checkEmail) {
       throw new HttpException(
         {
           statusCode: HttpStatus.NOT_ACCEPTABLE,
@@ -39,14 +36,12 @@ export class UsersService {
 
     const salt = uuid.v4();
     const user = new User();
-    user.firstName =  createUserDto.firstName
-    user.lastName = createUserDto.lastName
-    user.nis = createUserDto.nis
-    user.isActive = createUserDto.isActive
+    user.fullname =  createUserDto.fullname
+    user.email =  createUserDto.email
+    user.phone = createUserDto.phone
     user.password = await hashPassword(createUserDto.password, salt)
     user.salt = salt
-    user.department = await this.departmentRepository.findOne({where: {code: createUserDto.jurusan}})
-    user.role = await this.roleRepository.findOne({where: {id: createUserDto.roles}})
+    user.role = await this.rolesRepository.findOneOrFail({where: {id: createUserDto.roleId}})
 
     const result = await this.usersRepository.insert(user)
 
@@ -54,13 +49,11 @@ export class UsersService {
       where: {
         id: result.identifiers[0].id,
       },
-      relations: ['department', 'role']
     });
   }
 
   findAll() {
     return this.usersRepository.findAndCount({
-      relations: ['department', 'role']
     });
   }
 
@@ -70,7 +63,6 @@ export class UsersService {
         where: {
           id,
         },
-        relations : ['department', 'role']
       });
     } catch (e) {
       if (e instanceof EntityNotFoundError) {
@@ -88,7 +80,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto:UpdateUserDto) {
-    try {      
+    try {
       await this.usersRepository.findOneOrFail({
         where: {
           id,
@@ -108,20 +100,18 @@ export class UsersService {
       }
     }
 
-    const salt = uuid.v4();
     const user = new User();
-    user.firstName =  updateUserDto.firstName
-    user.lastName = updateUserDto.lastName
-    user.isActive = updateUserDto.isActive
-    user.department = await this.departmentRepository.findOne({where: {code: updateUserDto.jurusan}})
-    user.role = await this.roleRepository.findOne({where: {id: updateUserDto.roles}})
+    user.email = updateUserDto.email
+    user.fullname = updateUserDto.fullname
+    user.phone = updateUserDto.phone
+    user.image = updateUserDto.image
+    user.address = updateUserDto.address
     await this.usersRepository.update(id, user);
 
     return this.usersRepository.findOneOrFail({
       where: {
         id,
       },
-      relations: ['department', 'role']
     });
   }
 
@@ -148,4 +138,5 @@ export class UsersService {
 
     await this.usersRepository.delete(id);
   }
+
 }

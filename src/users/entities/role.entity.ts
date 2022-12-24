@@ -1,13 +1,14 @@
-import { User } from "src/users/entities/user.entity";
-import { OneToOne, Column, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Entity, OneToMany } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
-export class Role{
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+export class Role {
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column()
-    name: string;
+    @Column({
+        unique: true
+    })
+    name: string
 
     @CreateDateColumn({
         type: 'timestamp with time zone',
@@ -26,6 +27,4 @@ export class Role{
         nullable: true,
     })
     deletedAt: Date;
-
-
 }

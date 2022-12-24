@@ -6,12 +6,9 @@ import {
   DeleteDateColumn,
   VersionColumn,
   CreateDateColumn,
-  PrimaryColumn,
-  ManyToOne
+  ManyToOne,
 } from 'typeorm';
-
-import { Role } from 'src/role/entities/role.entities';
-import { Department } from './department.entity';
+import { Role } from './role.entity';
 
 
 @Entity()
@@ -20,18 +17,26 @@ export class User {
   id: string;
 
   @Column()
-  nis: string;
-
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
+  fullname: string;
 
   @Column({
-    type: 'text',
-    nullable: true
+    unique: true
   })
+  email: string;
+
+  @Column({
+    unique: true
+  })
+  phone: string;
+
+
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
+  image: string;
+
+  @Column()
   password: string;
 
   @Column({
@@ -51,16 +56,6 @@ export class User {
     },
   )
   role: Role;
-
-  @ManyToOne(
-    () => {
-      return Department;
-    },
-    (department) => {
-      return department.code
-    }
-  )
-  department: Department;
 
   @CreateDateColumn({
     type: 'timestamp with time zone',
