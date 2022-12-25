@@ -64,8 +64,62 @@ export class TransactionsService {
         });
     }
 
-    async approveSaller() {
+    async payment(transactionId: string){
+        try {
+          await this.transationRepository.findOneOrFail({
+            where: {
+              id: transactionId,
+            },
+            withDeleted: true
+          });
+        } catch (e) {
+          if (e instanceof EntityNotFoundError) {
+            throw new HttpException(
+              {
+                statusCode: HttpStatus.NOT_FOUND,
+                error: 'Data not found',
+              },
+              HttpStatus.NOT_FOUND,
+            );
+          } else {
+            throw e;
+          }
+        }
 
-    }
+        const transaction = new Transactions()
+        transaction.paymentStatus = true
+
+        await this.transationRepository.update(transactionId, transaction)
+      }
+
+    async remove(id: string){
+        try {
+          await this.transationRepository.findOneOrFail({
+            where: {
+              id,
+            },
+          });
+        } catch (e) {
+          if (e instanceof EntityNotFoundError) {
+            throw new HttpException(
+              {
+                statusCode: HttpStatus.NOT_FOUND,
+                error: 'Data not found',
+              },
+              HttpStatus.NOT_FOUND,
+            );
+          } else {
+            throw e;
+          }
+        }
+
+        const result = await this.transationRepository.softDelete(id);
+        if (result){
+          const transaction = new Transactions()
+          transaction.status = "Cancelled"
+
+          await this.transationRepository.update(id, {status: "Cancelled"})
+        }
+      }
 
 }
