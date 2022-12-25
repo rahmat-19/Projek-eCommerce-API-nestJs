@@ -2,7 +2,7 @@ import { ParseUUIDPipe } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsInt, IsNotEmpty, isNumber, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 
-export class createProdukDto {
+export class CreateProdukDto {
     @ApiProperty()
     @IsString()
     name: string;

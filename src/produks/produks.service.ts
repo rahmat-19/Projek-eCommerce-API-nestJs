@@ -4,7 +4,7 @@ import { HttpException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
-import { createProdukDto } from './dto/create-produk.dto';
+import { CreateProdukDto } from './dto/create-produk.dto';
 import { UpdateProdukDto } from './dto/update-produk.dto';
 import { Category } from './entities/category.entity';
 import { Produk } from './entities/produk.entity';
@@ -20,7 +20,7 @@ export class ProduksService {
         private categoryRepository: Repository<Category>,
     ){}
 
-    async create(createProdukDto: createProdukDto) {
+    async create(createProdukDto: CreateProdukDto) {
         const produk = new Produk()
 
         produk.name = createProdukDto.name
@@ -40,7 +40,7 @@ export class ProduksService {
         });
     }
 
-     async findAll() {
+      async findAll() {
         return await this.produkRepository.findAndCount();
       }
 
