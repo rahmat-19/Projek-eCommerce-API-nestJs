@@ -10,12 +10,4 @@ export class CreateTransactionDto {
     @IsUUID()
     userId: string;
 
-    @ApiProperty({default: false})
-    @IsBoolean()
-    paymentStatus: boolean;
-
-    @ApiProperty()
-    @IsString()
-    deliveryStatus: string;
-
 }

@@ -20,11 +20,17 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const checkEmail = await this.usersRepository.findOne({
       where: {
-        phone: createUserDto.email,
+        email: createUserDto.email,
       }
     });
 
-    if(checkEmail) {
+    const checkPhone =  await this.usersRepository.findOne({
+      where: {
+        phone: createUserDto.phone
+      }
+    })
+
+    if(checkEmail || checkPhone) {
       throw new HttpException(
         {
           statusCode: HttpStatus.NOT_ACCEPTABLE,

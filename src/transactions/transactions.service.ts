@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { CronExpression } from '@nestjs/schedule/dist';
 import { InjectRepository } from '@nestjs/typeorm';
+import { deliveryStatus, paymentStatus, transactionsStatus } from 'src/constant/transactions';
 import { Produk } from 'src/produks/entities/produk.entity';
 import { User } from 'src/users/entities/user.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
@@ -25,9 +26,10 @@ export class TransactionsService {
         const order = new Transactions()
         order.user = await this.userRepository.findOne({where: {id: createTransactionDto.userId}})
         order.produk = selectedProduk
-        order.paymentStatus = createTransactionDto.paymentStatus
-        order.deliveryStatus = createTransactionDto.deliveryStatus
+        order.paymentStatus = paymentStatus.UNPAID
+        order.deliveryStatus = deliveryStatus.INIT
         order.total = selectedProduk.price
+        order.status = transactionsStatus.INIT
         order.expDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000))
 
         const result = await this.transationRepository.insert(order)
@@ -90,7 +92,7 @@ export class TransactionsService {
         }
 
         const transaction = new Transactions()
-        transaction.paymentStatus = true
+        transaction.paymentStatus = paymentStatus.PAID
 
         await this.transationRepository.update(transactionId, transaction)
       }
@@ -118,10 +120,7 @@ export class TransactionsService {
 
         const result = await this.transationRepository.softDelete(id);
         if (result){
-          const transaction = new Transactions()
-          transaction.status = "Cancelled"
-
-          await this.transationRepository.update(id, {status: "Cancelled"})
+          await this.transationRepository.update(id, {status: transactionsStatus.CANCELLED})
         }
       }
 
@@ -143,12 +142,12 @@ export class TransactionsService {
             .withDeleted()
             .update()
             .set({
-              status: "Cancelled"
+              status: transactionsStatus.EXPIRED
             })
             .where("id = :id", {id: data})
             .execute()
 
-            console.log(`status id ${idTransactionByFilter} successfully changed to CANCELLED`);
+            console.log(`status id ${idTransactionByFilter} successfully changed to ` + transactionsStatus.EXPIRED);
 
           })
         }
