@@ -19,6 +19,9 @@ export class Transactions{
     status: string;
 
     @Column()
+    expDate: Date;
+
+    @Column()
     total: number
 
     @ManyToOne(()=> User, user => user.id, {onDelete: "CASCADE"})

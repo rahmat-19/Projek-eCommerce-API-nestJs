@@ -1,4 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { CronExpression } from '@nestjs/schedule/dist';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Produk } from 'src/produks/entities/produk.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -26,6 +28,7 @@ export class TransactionsService {
         order.paymentStatus = createTransactionDto.paymentStatus
         order.deliveryStatus = createTransactionDto.deliveryStatus
         order.total = selectedProduk.price
+        order.expDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000))
 
         const result = await this.transationRepository.insert(order)
         return this.transationRepository.findOneOrFail({
@@ -122,4 +125,33 @@ export class TransactionsService {
         }
       }
 
+      @Cron(CronExpression.EVERY_SECOND)
+      async validateExpDate() {
+
+        const [allTransaction, count] = await this.transationRepository.findAndCount();
+        const dateNow = new Date(new Date().getTime());
+        const filterTransation = allTransaction.filter(data => dateNow >= data.expDate && data.paymentStatus == false && data.status.toLowerCase() !== 'cancelled');
+        const idTransactionByFilter = filterTransation.map(data => data.id);
+        if (idTransactionByFilter){
+          idTransactionByFilter.map(data => {
+            this.transationRepository.createQueryBuilder()
+            .softDelete()
+            .where("id = :id", {id: data})
+            .execute()
+
+            this.transationRepository.createQueryBuilder()
+            .withDeleted()
+            .update()
+            .set({
+              status: "Cancelled"
+            })
+            .where("id = :id", {id: data})
+            .execute()
+
+            console.log(`status id ${idTransactionByFilter} successfully changed to CANCELLED`);
+
+          })
+        }
+
+      }
 }
