@@ -20,9 +20,9 @@ export class CreateProdukDto {
     @IsNumber()
     stok: number;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    image: string;
+    // @ApiProperty()
+    // @IsNotEmpty()
+    // image: string;
 
     @ApiProperty()
     @IsNotEmpty()

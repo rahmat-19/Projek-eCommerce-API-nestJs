@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Produk } from './entities/produk.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Category } from './entities/category.entity';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Produk, User, Category])],
+  imports: [TypeOrmModule.forFeature([Produk, User, Category]), MulterModule.register({dest: './uploads'})],
   providers: [ProduksService],
   controllers: [ProduksController]
 })

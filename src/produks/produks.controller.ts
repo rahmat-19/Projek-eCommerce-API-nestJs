@@ -1,17 +1,33 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, ParseUUIDPipe, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateProdukDto } from './dto/create-produk.dto';
 import { UpdateProdukDto } from './dto/update-produk.dto';
 import { ProduksService } from './produks.service';
+import { Express } from 'express'
+import { diskStorage } from 'multer';
+import { editFileName, imageFileFilter } from 'src/helpers/image-storage';
 
 @Controller('produks')
 export class ProduksController {
     constructor(private readonly produksService : ProduksService){}
+
     @Post()
-    async create(@Body() createProdukDto : CreateProdukDto)
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads',
+            filename: editFileName
+        }),
+        fileFilter: imageFileFilter
+    }))
+    async create(
+        @UploadedFile() file: Express.Multer.File,
+        @Body() createProdukDto : CreateProdukDto
+        )
     {
         try{
             return{
-                data: await this.produksService.create(createProdukDto),
+
+                data: await this.produksService.create(createProdukDto, file.filename),
                 statusCode: HttpStatus.CREATED,
                 message: 'success',
             };

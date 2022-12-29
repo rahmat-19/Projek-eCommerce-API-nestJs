@@ -20,14 +20,16 @@ export class ProduksService {
         private categoryRepository: Repository<Category>,
     ){}
 
-    async create(createProdukDto: CreateProdukDto) {
+    async create(createProdukDto: CreateProdukDto, fileNmae: string) {
+
+
         const produk = new Produk()
 
         produk.name = createProdukDto.name
         produk.description = createProdukDto.description
         produk.price = createProdukDto.price
         produk.stok = createProdukDto.stok
-        produk.image = createProdukDto.image
+        produk.image = fileNmae
         produk.user = await this.userRepository.findOne({where: {id: createProdukDto.userId}});
         produk.category = await this.categoryRepository.findOne({where: {id: createProdukDto.categoryId}});
 
