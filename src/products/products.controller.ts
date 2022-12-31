@@ -2,14 +2,14 @@ import { Body, Controller, Delete, Get, HttpStatus, Param, ParseUUIDPipe, Post, 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateProdukDto } from './dto/create-produk.dto';
 import { UpdateProdukDto } from './dto/update-produk.dto';
-import { ProduksService } from './produks.service';
+import { ProductsService } from './products.service';
 import { Express } from 'express'
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from 'src/helpers/image-storage';
 
-@Controller('produks')
-export class ProduksController {
-    constructor(private readonly produksService : ProduksService){}
+@Controller('products')
+export class ProductsController {
+    constructor(private readonly produksService : ProductsService){}
 
     @Post()
     @UseInterceptors(FileInterceptor('file', {

@@ -4,7 +4,7 @@ import { Category } from "./category.entity";
 
 @Entity()
 
-export class Produk {
+export class Product {
     @PrimaryGeneratedColumn('uuid')
     id: string
 

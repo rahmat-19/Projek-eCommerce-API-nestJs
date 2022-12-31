@@ -3,7 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { CronExpression } from '@nestjs/schedule/dist';
 import { InjectRepository } from '@nestjs/typeorm';
 import { deliveryStatus, paymentStatus, transactionsStatus } from 'src/constant/transactions';
-import { Produk } from 'src/produks/entities/produk.entity';
+import { Product } from 'src/products/entities/product.entity';
 import { User } from 'src/users/entities/user.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { CreateTransactionDto } from './dto/create-transactions.dto';
@@ -16,8 +16,8 @@ export class TransactionsService {
         private transationRepository : Repository<Transactions>,
         @InjectRepository(User)
         private userRepository : Repository<User>,
-        @InjectRepository(Produk)
-        private produkRepository : Repository<Produk>,
+        @InjectRepository(Product)
+        private produkRepository : Repository<Product>,
     ){}
 
     async create(createTransactionDto: CreateTransactionDto) {

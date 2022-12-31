@@ -1,4 +1,4 @@
-import { Produk } from "src/produks/entities/produk.entity";
+import { Product } from "src/products/entities/product.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -27,8 +27,8 @@ export class Transactions{
     @ManyToOne(()=> User, user => user.id, {onDelete: "CASCADE"})
     user: User
 
-    @ManyToOne(()=> Produk, produk => produk.id)
-    produk: Produk;
+    @ManyToOne(()=> Product, produk => produk.id)
+    produk: Product;
 
     @CreateDateColumn({
         type: 'timestamp with time zone',

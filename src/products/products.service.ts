@@ -7,13 +7,13 @@ import { EntityNotFoundError, Repository } from 'typeorm';
 import { CreateProdukDto } from './dto/create-produk.dto';
 import { UpdateProdukDto } from './dto/update-produk.dto';
 import { Category } from './entities/category.entity';
-import { Produk } from './entities/produk.entity';
+import { Product } from './entities/product.entity';
 
 @Injectable()
-export class ProduksService {
+export class ProductsService {
     constructor (
-        @InjectRepository(Produk)
-        private produkRepository: Repository<Produk>,
+        @InjectRepository(Product)
+        private produkRepository: Repository<Product>,
         @InjectRepository(User)
         private userRepository: Repository<User>,
         @InjectRepository(Category)
@@ -23,7 +23,7 @@ export class ProduksService {
     async create(createProdukDto: CreateProdukDto, fileNmae: string) {
 
 
-        const produk = new Produk()
+        const produk = new Product()
 
         produk.name = createProdukDto.name
         produk.description = createProdukDto.description
@@ -89,7 +89,7 @@ export class ProduksService {
           }
         }
 
-        const produk = new Produk()
+        const produk = new Product()
         produk.name = updateProdukDto.name
         produk.price = updateProdukDto.price
         produk.description = updateProdukDto.description

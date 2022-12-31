@@ -6,7 +6,7 @@ import { UsersModule } from './users/users.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { LoggerModule } from 'nestjs-pino';
 import { HealthModule } from './health/health.module';
-import { ProduksModule } from './produks/produks.module';
+import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import configuration from './config/configuration';
 
@@ -77,7 +77,7 @@ import configuration from './config/configuration';
     }),
     UsersModule,
     HealthModule,
-    ProduksModule,
+    ProductsModule,
     TransactionsModule,
   ],
 })
