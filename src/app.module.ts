@@ -9,6 +9,7 @@ import { HealthModule } from './health/health.module';
 import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import configuration from './config/configuration';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import configuration from './config/configuration';
     HealthModule,
     ProductsModule,
     TransactionsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

@@ -145,4 +145,26 @@ export class UsersService {
     await this.usersRepository.delete(id);
   }
 
+  async findByEmail(email:string) {
+    try{
+      return await this.usersRepository.findOneOrFail({
+        where: {
+          email,
+        },
+        relations: ['role']
+      });
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+          throw new HttpException({
+              statusCode: HttpStatus.NOT_FOUND,
+              error: 'Data not found',
+          },
+          HttpStatus.NOT_FOUND,
+      );
+      } else {
+          throw e;
+      }
+    }
+  }
+
 }

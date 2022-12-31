@@ -6,7 +6,9 @@ import { ProductsService } from './products.service';
 import { Express } from 'express'
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from 'src/helpers/image-storage';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags("Products")
 @Controller('products')
 export class ProductsController {
     constructor(private readonly produksService : ProductsService){}

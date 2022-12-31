@@ -1,9 +1,12 @@
 import { Controller, Post, Body, HttpStatus, ConflictException, Get, Request, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { LoginDto } from 'src/users/dto/login.dto';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 
+@ApiTags("Auth")
 @Controller('auth')
 export class AuthController {
     constructor(
@@ -11,11 +14,16 @@ export class AuthController {
         private readonly userService: UsersService,
     ){}
 
-    @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Request() req) {
-        return this.authService.createGenerateToken(req.user)
-    }
+    async login(@Body() loginDto: LoginDto) {
+        console.log("ini login " + loginDto);
+        
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'Login Successful',
+          data: await this.authService.login(loginDto),
+        };
+      }
 
     @Post('register')
     async create(@Body() createUserDto: CreateUserDto){
@@ -23,7 +31,7 @@ export class AuthController {
             return {
                 data: await this.userService.create(createUserDto),
                 statusCode: HttpStatus.CREATED,
-                message: 'success',
+                message: 'success create account',
             };
         } catch(e){
             console.log(e);

@@ -9,6 +9,7 @@ export class CreateUserDto {
   @IsEmail()
   @IsNotEmpty()
   @IsLowercase()
+  @ApiProperty()
   email: string;
 
   @ApiProperty()
@@ -18,12 +19,10 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @Length(8, 24)
   password: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  roleId: number;
+  roleId: string;
 
   @ApiProperty()
   isActive?: boolean;
