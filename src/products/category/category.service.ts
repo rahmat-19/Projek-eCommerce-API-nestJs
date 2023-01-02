@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException, RequestMethod } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
@@ -26,9 +27,15 @@ export class CategoryService {
         });
     }
 
-    findAll(): Promise<Category[]> {
-        return this.categoryRepository.find();
+    async findAll (query: PaginateQuery): Promise<Paginated<Category>>{
+      return paginate(query, this.categoryRepository, {
+        sortableColumns: ['name'],
+        defaultSortBy: [['name', 'ASC']],
+        searchableColumns: ['name'],
+        defaultLimit: 5,
+      })
     }
+  
 
     async findOne(id: string){
       try {

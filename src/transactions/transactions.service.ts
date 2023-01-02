@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { CronExpression } from '@nestjs/schedule/dist';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { deliveryStatus, paymentStatus, transactionsStatus } from 'src/constant/transactions';
 import { Product } from 'src/products/entities/product.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -63,11 +64,15 @@ export class TransactionsService {
         }
     }
 
-    async findAll() {
-        return await this.transationRepository.findAndCount({
-            relations: ['produk', 'user'],
-        });
+    async findAll (query: PaginateQuery): Promise<Paginated<Transactions>>{
+      return paginate(query, this.transationRepository, {
+        sortableColumns: ['createdAt', 'paymentStatus', 'status'],
+        defaultSortBy: [['createdAt', 'DESC']],
+        searchableColumns: ['createdAt'],
+        defaultLimit: 5,
+      })
     }
+  
 
     async payment(transactionId: string){
         try {

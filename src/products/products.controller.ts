@@ -7,11 +7,13 @@ import { Express } from 'express'
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from 'src/helpers/image-storage';
 import { ApiTags } from '@nestjs/swagger';
+import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+import { Product } from './entities/product.entity';
 
 @ApiTags("Products")
 @Controller('products')
 export class ProductsController {
-    constructor(private readonly produksService : ProductsService){}
+    constructor(private readonly productsService : ProductsService){}
 
     @Post()
     @UseInterceptors(FileInterceptor('file', {
@@ -29,7 +31,7 @@ export class ProductsController {
         try{
             return{
 
-                data: await this.produksService.create(createProdukDto, file.filename),
+                data: await this.productsService.create(createProdukDto, file.filename),
                 statusCode: HttpStatus.CREATED,
                 message: 'success',
             };
@@ -41,23 +43,23 @@ export class ProductsController {
     @Get(':id')
     async findOne(@Param('id', ParseUUIDPipe) id: string) {
         return {
-            data: await this.produksService.findOne(id),
+            data: await this.productsService.findOne(id),
             statusCode: HttpStatus.OK,
             message: 'success',
         };
     }
 
     @Get()
-    async findAll() {
-        const [data, count] = await this.produksService.findAll();
-
-        return {
-            data,
-            count,
-            statusCode: HttpStatus.OK,
-            massage: 'success',
-        };
+    async getAll(@Paginate() query: PaginateQuery): Promise<Paginated<Product>>{
+      try{
+      return await this.productsService.findAll(query)
+      } catch(e){
+        console.log(e);
+        
+      }
+  
     }
+
 
     @Put(':id')
     async update(
@@ -65,7 +67,7 @@ export class ProductsController {
         @Body() updateProdukDto: UpdateProdukDto,
     ) {
         return {
-            data: await this.produksService.update(id, updateProdukDto),
+            data: await this.productsService.update(id, updateProdukDto),
             statusCode: HttpStatus.OK,
             massage: 'success',
         };
@@ -73,7 +75,7 @@ export class ProductsController {
 
     @Delete(':id')
     async remove(@Param('id', ParseUUIDPipe) id: string) {
-        await this.produksService.remove(id);
+        await this.productsService.remove(id);
 
         return {
             statusCode: HttpStatus.OK,

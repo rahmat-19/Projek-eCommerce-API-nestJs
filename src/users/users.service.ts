@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as uuid from 'uuid';
 import { hashPassword } from 'src/utils/hash-password';
 import { Role } from './entities/role.entity';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 
 @Injectable()
 export class UsersService {
@@ -58,10 +59,15 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return this.usersRepository.findAndCount({
-    });
+  async findAll (query: PaginateQuery): Promise<Paginated<User>>{
+    return paginate(query, this.usersRepository, {
+      sortableColumns: ['fullname'],
+      defaultSortBy: [['fullname', 'ASC']],
+      searchableColumns: ['fullname', 'email'],
+      defaultLimit: 5,
+    })
   }
+
 
   async findOne(id: string) {
     try {

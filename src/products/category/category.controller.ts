@@ -1,6 +1,8 @@
 import { Body, Controller, Get, HttpStatus, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
+import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
+import { Category } from '../entities/category.entity';
 import { CategoryService } from './category.service';
 
 
@@ -16,16 +18,14 @@ export class CategoryController {
       };
     }
 
-  @Get()
-    async findAll() {
-      const [data, count] = await this.categoryService.findAll();
-
-      return {
-        data,
-        count,
-        statusCode: HttpStatus.OK,
-        message: 'success',
-      };
+    @Get()
+    async getAll(@Paginate() query: PaginateQuery): Promise<Paginated<Category>>{
+      try{
+        return await this.categoryService.findAll(query)
+      } catch(e){
+        console.log(e);
+          
+      }
     }
 
   @Get(':category')

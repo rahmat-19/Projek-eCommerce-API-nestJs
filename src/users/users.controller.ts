@@ -13,6 +13,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+import { User } from './entities/user.entity';
 
 @ApiTags('Users')
 @Controller('users')
@@ -20,15 +22,13 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async findAll() {
-    const [data, count] = await this.usersService.findAll();
-
-    return {
-      data,
-      count,
-      statusCode: HttpStatus.OK,
-      message: 'success',
-    };
+  async getAll(@Paginate() query: PaginateQuery): Promise<Paginated<User>>{
+    try{
+      return await this.usersService.findAll(query)
+    } catch(e){
+      console.log(e);
+        
+    }
   }
 
   @Get(':id')

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { User } from 'src/users/entities/user.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { CreateProdukDto } from './dto/create-produk.dto';
@@ -42,9 +43,16 @@ export class ProductsService {
         });
     }
 
-      async findAll() {
-        return await this.produkRepository.findAndCount();
-      }
+    async findAll (query: PaginateQuery): Promise<Paginated<Product>>{
+      return paginate(query, this.produkRepository, {
+        sortableColumns: ['name'],
+        defaultSortBy: [['name', 'ASC']],
+        searchableColumns: ['name'],
+        defaultLimit: 5,
+        relations: ['category']
+      })
+    }
+  
 
       async findOne(id: string) {
         try {
