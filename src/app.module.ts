@@ -10,6 +10,7 @@ import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import configuration from './config/configuration';
 import { AuthModule } from './auth/auth.module';
+import { ShoppingCartsModule } from './shopping-carts/shopping-carts.module';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { AuthModule } from './auth/auth.module';
     ProductsModule,
     TransactionsModule,
     AuthModule,
+    ShoppingCartsModule,
   ],
 })
 export class AppModule {}

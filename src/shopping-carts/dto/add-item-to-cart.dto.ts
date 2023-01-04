@@ -6,7 +6,7 @@ export class AddItemToChartDto {
     @ApiProperty()
     @IsNotEmpty()
     @IsNumber()
-    qty: number
+    qty: number=1
 
     @ApiProperty()
     @IsNotEmpty()

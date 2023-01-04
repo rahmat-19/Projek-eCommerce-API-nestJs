@@ -1,5 +1,6 @@
 import { Controller, HttpStatus } from '@nestjs/common';
-import { Body, Get, Post } from '@nestjs/common/decorators';
+import { Body, Get, Param, Post, Put } from '@nestjs/common/decorators';
+import { ParseUUIDPipe } from '@nestjs/common/pipes';
 import { AddItemToChartDto } from './dto/add-item-to-cart.dto';
 import { ShoppingCartsService } from './shopping-carts.service';
 
@@ -23,6 +24,33 @@ export class ShoppingCartsController {
             console.log((e.code));
         }
     }
+
+
+    @Put(':id')
+    async update(
+        @Param('id', ParseUUIDPipe) id: string,
+    ) {
+        console.log(id);
+
+        return {
+            data: await this.shoppingCartsService.updateQty(id),
+            statusCode: HttpStatus.OK,
+            massage: 'success',
+        };
+    }
+
+    @Get()
+    async findAll() {
+        const [data, count] = await this.shoppingCartsService.findAll();
+
+        return {
+            data,
+            count,
+            statusCode: HttpStatus.OK,
+            massage: 'success',
+        };
+    }
+
 
 
 }

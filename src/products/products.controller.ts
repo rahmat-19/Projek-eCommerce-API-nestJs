@@ -51,13 +51,13 @@ export class ProductsController {
 
     @Get()
     async getAll(@Paginate() query: PaginateQuery): Promise<Paginated<Product>>{
-      try{
-      return await this.productsService.findAll(query)
-      } catch(e){
-        console.log(e);
-        
-      }
-  
+        try{
+            return await this.productsService.findAll(query)
+        } catch(e){
+            console.log(e);
+
+        }
+
     }
 
 
