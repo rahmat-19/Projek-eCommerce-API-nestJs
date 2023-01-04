@@ -11,6 +11,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import configuration from './config/configuration';
 import { AuthModule } from './auth/auth.module';
 import { ShoppingCartsModule } from './shopping-carts/shopping-carts.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { ShoppingCartsModule } from './shopping-carts/shopping-carts.module';
     TransactionsModule,
     AuthModule,
     ShoppingCartsModule,
+    FileModule,
   ],
 })
 export class AppModule {}
