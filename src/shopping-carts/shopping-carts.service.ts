@@ -55,14 +55,13 @@ export class ShoppingCartsService {
         }
     }
 
-    async updateQty(id: string, qty: number=1) {
+    async updateQty(id: string, qty: number) {
         try {
-            const checkProductExistOnCar = await this.shoppingCartsRepository.findOneOrFail({
+            await this.shoppingCartsRepository.findOneOrFail({
                 where: {
                     id,
                 },
             });
-            await this.shoppingCartsRepository.update(id, {qty: checkProductExistOnCar.qty+qty});
         } catch (e) {
             if (e instanceof EntityNotFoundError) {
                 throw new HttpException(
@@ -76,6 +75,9 @@ export class ShoppingCartsService {
                 throw e;
             }
         }
+
+        await this.shoppingCartsRepository.update(id, {qty: qty});
+
 
     }
 
