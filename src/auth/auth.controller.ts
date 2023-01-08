@@ -15,9 +15,7 @@ export class AuthController {
     ){}
 
     @Post('login')
-    async login(@Body() loginDto: LoginDto) {
-        console.log("ini login " + loginDto);
-        
+    async login(@Body() loginDto: LoginDto) {        
         return {
           statusCode: HttpStatus.OK,
           message: 'Login Successful',

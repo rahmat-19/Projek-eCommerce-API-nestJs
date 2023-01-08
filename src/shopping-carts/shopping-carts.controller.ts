@@ -2,27 +2,22 @@ import { Controller, HttpStatus } from '@nestjs/common';
 import { Body, Get, Param, Post, Put, Req } from '@nestjs/common/decorators';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
 import { number, string } from 'joi';
-import { AddItemToChartDto } from './dto/add-item-to-cart.dto';
+import { AddItemToCartDto } from './dto/add-item-to-cart.dto';
 import { ShoppingCartsService } from './shopping-carts.service';
 
-@Controller('shopping-carts')
+@Controller('cart')
 export class ShoppingCartsController {
     constructor(private readonly shoppingCartsService:ShoppingCartsService){}
 
     @Post()
-    async create(
-        @Body() addItemToChart : AddItemToChartDto
-        )
-    {
+    async create(@Body() addItemToCart : AddItemToCartDto) {
         try{
             return{
-
-                data: await this.shoppingCartsService.addItem(addItemToChart),
+                data: await this.shoppingCartsService.addItem(addItemToCart),
                 statusCode: HttpStatus.CREATED,
                 message: 'success',
             };
         } catch(e){
-            console.log((e.code));
         }
     }
 

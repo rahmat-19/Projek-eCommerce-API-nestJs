@@ -9,19 +9,17 @@ export class ShoppingCarts {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @Column()
+    createdBy: string;
 
-    @ManyToOne(
-        () => {return User},
-        (user) => {return user.id},
-    )
-    user: User
+    @Column()
+    userId: string;
 
     @ManyToOne(
         () => {return Product},
         (product) => {return product.id},
     )
     product: Product
-
 
     @Column({
         default: 1

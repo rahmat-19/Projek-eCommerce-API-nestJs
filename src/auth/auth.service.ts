@@ -31,7 +31,9 @@ export class AuthService {
   }
 
     async login(loginDto: LoginDto) {
-      const user = await this.repositoryUser.findOne({where: {email: loginDto.email}, relations: ['role']})      
+      const user = await this.repositoryUser.findOne({where: {email: loginDto.email}, relations: ['role']})
+      console.log(`ini pass dari db ${user.password}, ini pass dari dto ${loginDto.password}`);
+            
 
       if (
         user.password !== (await hashPassword(loginDto.password, user.salt))

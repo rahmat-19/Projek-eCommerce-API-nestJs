@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
 
-export class AddItemToChartDto {
+export class AddItemToCartDto {
 
     @ApiProperty()
     @IsNotEmpty()
@@ -10,12 +10,10 @@ export class AddItemToChartDto {
 
     @ApiProperty()
     @IsNotEmpty()
-    @IsUUID()
     productId?: string
 
     @ApiProperty()
-    @IsNotEmpty()
-    @IsUUID()
+    @IsNotEmpty()   
     userId: string
 
 }

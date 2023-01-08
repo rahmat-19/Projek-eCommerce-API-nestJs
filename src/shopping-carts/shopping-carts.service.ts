@@ -5,9 +5,9 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { User } from 'src/users/entities/user.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
-import { AddItemToChartDto } from './dto/add-item-to-cart.dto';
 import { ShoppingCarts } from './entities/shopping-carts.entity';
 import { ProductsService } from 'src/products/products.service';
+import { AddItemToCartDto } from './dto/add-item-to-cart.dto';
 
 @Injectable()
 export class ShoppingCartsService {
@@ -20,39 +20,57 @@ export class ShoppingCartsService {
         private productRepository: Repository<Product>,
     ){}
 
-    async addItem(addItemToChart: AddItemToChartDto)
-    {
+    async addItem(addItemToCart: AddItemToCartDto) {
+        const product = await this.productRepository.findOne({
+            where: {
+                id: addItemToCart.productId
+            }
+        })
         const checkProductExistOnCart = await this.shoppingCartsRepository.findOne({
-            where:
+            where: [
                 {
                     product: {
-                        id: addItemToChart.productId
+                        id: product.id
                     },
+                    userId: addItemToCart.userId
                 }
+            ]
         });
 
+        if (!product) {
+            throw new HttpException(
+              {
+                statusCode: HttpStatus.NOT_FOUND,
+                error: 'Product Not Found',
+              },
+              HttpStatus.NOT_FOUND,
+            );
+          }      
 
-        if (!checkProductExistOnCart) {
-            const item = new ShoppingCarts();
-            item.product = await this.productRepository.findOneOrFail({where: {id: addItemToChart.productId}})
-            item.user = await this.userRepository.findOneOrFail({where: {id: addItemToChart.userId}})
-            item.qty = addItemToChart.qty
-
-
-            const result = await this.shoppingCartsRepository.insert(addItemToChart);
-
-
-            return this.shoppingCartsRepository.findOneOrFail({
-                where: {
-                    id: result.identifiers[0].id,
+        if (checkProductExistOnCart) {
+            throw new HttpException(
+                {
+                    statusCode: HttpStatus.BAD_REQUEST,
+                    error: 'Product already in cart'
                 },
-                relations: ['user', 'product']
-            });
-        } else {
-
-            await this.shoppingCartsRepository.update(checkProductExistOnCart.id, {qty: checkProductExistOnCart.qty+addItemToChart.qty});
-
+                HttpStatus.BAD_REQUEST
+            )
         }
+
+        const cart = new ShoppingCarts()
+        cart.createdBy = await (await this.userRepository.findOne({where: {id: addItemToCart.userId}})).email
+        cart.userId = addItemToCart.userId
+        cart.product = product
+        cart.qty = addItemToCart.qty        
+
+        const result = await this.shoppingCartsRepository.insert(cart)        
+
+        return await this.shoppingCartsRepository.findOneOrFail({
+            where: {
+                id: result.identifiers[0].id,
+            }
+        })
+
     }
 
     async updateQty(id: string, qty: number) {

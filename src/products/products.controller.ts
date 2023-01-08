@@ -16,22 +16,12 @@ export class ProductsController {
     constructor(private readonly productsService : ProductsService){}
 
     @Post()
-    @UseInterceptors(FileInterceptor('file', {
-        storage: diskStorage({
-            destination: './uploads',
-            filename: editFileName
-        }),
-        fileFilter: imageFileFilter
-    }))
-    async create(
-        @UploadedFile() file: Express.Multer.File,
-        @Body() createProdukDto : CreateProdukDto
-        )
-    {
+    async create(@Body() createProdukDto : CreateProdukDto) {
         try{
+            console.log(createProdukDto);
+            
             return{
-
-                data: await this.productsService.create(createProdukDto, file.filename),
+                data: await this.productsService.create(createProdukDto),
                 statusCode: HttpStatus.CREATED,
                 message: 'success',
             };
