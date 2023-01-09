@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Request, UseGuards, ParseUUIDPipe, Put } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CartService } from './cart.service';
@@ -6,6 +7,7 @@ import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { Cart } from './entities/cart.entity';
 
+@ApiTags('Cart')
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
@@ -39,7 +41,7 @@ export class CartController {
     };
   }
 
-  @Put(':id')
+  @Put('update/:id')
   async update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
     return {
       data: await this.cartService.update(updateCartDto, id),
@@ -48,7 +50,7 @@ export class CartController {
     };
   }
 
-  @Delete(':id')
+  @Delete('remove/:id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.cartService.remove(id);
 

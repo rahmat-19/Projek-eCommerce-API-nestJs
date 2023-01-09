@@ -20,16 +20,16 @@ export class FileService {
     const user = req.user;
     const name = uuid.v4()
     const dir = `./uploads/`;
-
-
+  
+  
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, {recursive: true});
     }
-
+  
     console.log(fileExtName, "fileExtName");
-
+  
     const d = new Date();
-
+  
     if (['.png', '.jpg', '.jpeg', '.JPEG', '.JPG', '.PNG', '.pdf', '.PDF'].includes(fileExtName)) {
       callback(
         null,
@@ -38,7 +38,7 @@ export class FileService {
     } else {
       callback(new HttpException(`Unsupported file type ${path.extname(file.originalname)}, the document must be .pdf, .png, .jpg, or .jpeg`, HttpStatus.BAD_REQUEST), false)
     }
-
+    
   };
 
 }

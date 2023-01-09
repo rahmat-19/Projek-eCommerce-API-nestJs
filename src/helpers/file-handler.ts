@@ -7,22 +7,17 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 export const editFileName = (req, file, callback) => {
   // const name = file.originalname.split('.')[0];
   const fileExtName = path.extname(file.originalname);
+  const name = uuid.v4()
   const user = req.user;
-  let instituteName;
-  if (req.query.instituteName) {
-    instituteName = req.query.instituteName.replace(/ /gi, '_');
-  } else {
-    instituteName = user?.institutionName?.replace(/ /gi, '_');
-  }
-
-  const dir = `./uploads/${instituteName}`;
+  
+  const dir = `./uploads`;
 
 
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, {recursive: true});
   }
 
-  console.log(fileExtName, "fileExtName");
+  console.log(fileExtName, "fileExtNameeeeee");
   // const fileExtName = 'asdasd';
   // const randomName = Array(4)
   //   .fill(null)
@@ -34,12 +29,12 @@ export const editFileName = (req, file, callback) => {
   if (['.png', '.jpg', '.jpeg', '.JPEG', '.JPG', '.PNG', '.pdf', '.PDF'].includes(fileExtName)) {
     callback(
       null,
-      `${instituteName}/${instituteName}_${moment().format('YYYYMMDDHHmmss')}${fileExtName}`,
+      `${name}_${moment().format('YYYYMMDDHHmmss')}${fileExtName}`,
     );
   } else {
     callback(new HttpException(`Unsupported file type ${path.extname(file.originalname)}, the document must be .pdf, .png, .jpg, or .jpeg`, HttpStatus.BAD_REQUEST), false)
   }
-
+  
 };
 
 export const editFileNameRegister = (req, file, callback) => {

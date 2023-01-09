@@ -74,7 +74,7 @@ export class CartService {
 
   async findAll (query: PaginateQuery): Promise<Paginated<Cart>>{
     return paginate(query, this.cartRepository, {
-      sortableColumns: [],
+      sortableColumns: ['createdAt'],
       defaultSortBy: [['createdAt', 'ASC']],
       defaultLimit: 5,
     })

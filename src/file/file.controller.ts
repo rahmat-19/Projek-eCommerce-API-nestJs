@@ -1,4 +1,4 @@
-// import {editFileName, editFileNameExport, editFileNameRegister} from './../helper/file-handler';
+import {editFileName, editFileNameExport, editFileNameRegister} from '../helpers/file-handler';
 import {
   Body,
   Catch,
@@ -18,9 +18,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { FileService } from './file.service';
 import * as fs from 'fs';
-import { editFileName } from 'src/helpers/image-storage';
+import { ApiTags } from '@nestjs/swagger';
 
 @Catch(HttpException)
+@ApiTags('File')
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
@@ -72,6 +73,8 @@ export class FileController {
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
   ) {
+    console.log('test');
+    
     return {
       statusCode: HttpStatus.OK,
       message: 'Success Upload File',
@@ -82,4 +85,14 @@ export class FileController {
       },
     };
   }
+
+  @Get('export/download/:filename')
+    async showImage(
+      @Param('filename') filename : string,
+      @Res() res
+    ): Promise<any>{
+      await res.sendFile(filename, {root: './uploads/export'})
+    }
+
 }
+
