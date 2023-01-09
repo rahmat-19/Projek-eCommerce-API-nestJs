@@ -1,3 +1,4 @@
+import { Cart } from "src/cart/entities/cart.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Category } from "./category.entity";
@@ -53,5 +54,15 @@ export class Product {
         nullable: true,
       })
       deletedAt: Date;
+
+      @ManyToOne(
+        () => {
+          return Cart;
+        },
+        (cart) => {
+          return cart.product;
+        },
+      )
+      cart: Cart;
 
 }

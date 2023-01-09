@@ -10,8 +10,8 @@ import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import configuration from './config/configuration';
 import { AuthModule } from './auth/auth.module';
-import { ShoppingCartsModule } from './shopping-carts/shopping-carts.module';
 import { FileModule } from './file/file.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -83,8 +83,8 @@ import { FileModule } from './file/file.module';
     ProductsModule,
     TransactionsModule,
     AuthModule,
-    ShoppingCartsModule,
     FileModule,
+    CartModule,
   ],
 })
 export class AppModule {}
