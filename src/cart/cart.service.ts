@@ -160,96 +160,28 @@ export class CartService {
     await this.cartRepository.delete(id);
   }
 
-  async increaseQty(id: string) {
-    let data
-    try {
-      data = await this.cartRepository.findOneOrFail({
-        where: {
-          id,
-        },
-        relations: ['product']
-      });
-    } catch (e) {
-      if (e instanceof EntityNotFoundError) {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.NOT_FOUND,
-            error: 'Data not found',
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      } else {
-        throw e;
-      }
-    }
-
-    if (data.qty + 1 > data.product.stok) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          messages: 'out of stock'
-        },
-        HttpStatus.BAD_REQUEST
-      );
-    } else {
-
-      await this.cartRepository.update(id, {qty: data.qty + 1});
-
-    }
+  async increaseQty(increaseDto: IncreaseDto) {
 
 
 
-    // await this.cartRepository.createQueryBuilder()
-    // .update(Cart)
-    // .set({
-    //   qty: ()=> `qty + ${1}`
-    // })
-    // .where("id = :id", { id: id })
-    // .execute()
+
+    await this.cartRepository.createQueryBuilder()
+    .update(Cart)
+    .set({
+      qty: ()=> `qty + ${increaseDto.qty}`
+    })
+    .where("id = :id", { id: increaseDto.id })
+    .execute()
   }
 
-  async decreaseQty(id: string) {
-    let data
-    try {
-      data = await this.cartRepository.findOneOrFail({
-        where: {
-          id,
-        },
-        relations: ['product']
-      });
-    } catch (e) {
-      if (e instanceof EntityNotFoundError) {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.NOT_FOUND,
-            error: 'Data not found',
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      } else {
-        throw e;
-      }
-    }
+  async decreaseQty(decreaseQty: DecreaseDto) {
 
-    if (data.qty - 1 < 0) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          messages: 'out of stock'
-        },
-        HttpStatus.BAD_REQUEST
-      );
-    } else {
-      await this.cartRepository.update(id, {qty: data.qty - 1});
-
-    }
-
-    // await this.cartRepository.createQueryBuilder()
-    // .update(Cart)
-    // .set({
-    //   qty: ()=> `qty - ${1}`
-    // })
-    // .where("id = :id", { id: id })
-    // .execute()
+    await this.cartRepository.createQueryBuilder()
+    .update(Cart)
+    .set({
+      qty: ()=> `qty - ${decreaseQty.qty}`
+    })
+    .where("id = :id", { id: decreaseQty.id })
+    .execute()
   }
 }
