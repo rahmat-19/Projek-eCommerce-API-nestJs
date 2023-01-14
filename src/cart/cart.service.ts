@@ -51,7 +51,13 @@ export class CartService {
     }
 
     if (checkProductExist) {
-      this.increaseQty(checkProductExist.id);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          messages: 'product is already in the cart'
+        },
+        HttpStatus.BAD_REQUEST
+      );
     }
 
     const cart = new Cart()
