@@ -30,7 +30,7 @@ export class CartController {
       return await this.cartService.findAll(query)
     } catch(e){
       console.log(e);
-        
+
     }
   }
 
@@ -62,19 +62,19 @@ export class CartController {
     };
   }
 
-  @Post('increase')
-  async increaseQty(@Body() increaseDto: IncreaseDto) {
+  @Put('increase/:id')
+  async increaseQty(@Param('id', ParseUUIDPipe) id: string) {
     return{
-      data: await this.cartService.increaseQty(increaseDto),
+      data: await this.cartService.increaseQty(id),
       statusCode: HttpStatus.OK,
       message: 'success',
     };
   }
 
-  @Post('decrease')
-  async decreaseQty(@Body() decreaseQty: DecreaseDto) {
+  @Put('decrease/:id')
+  async decreaseQty(@Param('id', ParseUUIDPipe) id: string) {
     return{
-      data: await this.cartService.decreaseQty(decreaseQty),
+      data: await this.cartService.decreaseQty(id),
       statusCode: HttpStatus.OK,
       message: 'success',
     };

@@ -35,8 +35,10 @@ export class CartService {
         }
       ]
     })
-    
-    console.log("ini product exist: " + checkProductExist);
+
+    console.log("ini product exist: ");
+
+
 
     if (!product) {
       throw new HttpException(
@@ -47,15 +49,9 @@ export class CartService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    
+
     if (checkProductExist) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          messages: 'product is already in the cart'
-        },
-        HttpStatus.BAD_REQUEST
-      );
+      this.increaseQty(checkProductExist.id);
     }
 
     const cart = new Cart()
@@ -70,7 +66,7 @@ export class CartService {
     return this.cartRepository.findOneOrFail({
       where: {
         id: result.identifiers[0].id,
-      }, 
+      },
       relations: ['product']
     });
   }
@@ -87,7 +83,7 @@ export class CartService {
     try {
       return await this.cartRepository.findOneOrFail({
         where: {
-          userId: id,
+          id: id,
         },
         relations: ['product']
       });
@@ -164,23 +160,96 @@ export class CartService {
     await this.cartRepository.delete(id);
   }
 
-  async increaseQty(increaseDto: IncreaseDto) {
-    await this.cartRepository.createQueryBuilder()
-    .update(Cart)
-    .set({
-      qty: ()=> `qty + ${increaseDto.qty}`
-    })
-    .where("id = :id", { id: increaseDto.id })
-    .execute()
+  async increaseQty(id: string) {
+    let data
+    try {
+      data = await this.cartRepository.findOneOrFail({
+        where: {
+          id,
+        },
+        relations: ['product']
+      });
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.NOT_FOUND,
+            error: 'Data not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        throw e;
+      }
+    }
+
+    if (data.qty + 1 > data.product.stok) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          messages: 'out of stock'
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    } else {
+
+      await this.cartRepository.update(id, {qty: data.qty + 1});
+
+    }
+
+
+
+    // await this.cartRepository.createQueryBuilder()
+    // .update(Cart)
+    // .set({
+    //   qty: ()=> `qty + ${1}`
+    // })
+    // .where("id = :id", { id: id })
+    // .execute()
   }
 
-  async decreaseQty(decreaseDto: DecreaseDto) {
-    await this.cartRepository.createQueryBuilder()
-    .update(Cart)
-    .set({
-      qty: ()=> `qty - ${decreaseDto.qty}`
-    })
-    .where("id = :id", { id: decreaseDto.id })
-    .execute()
+  async decreaseQty(id: string) {
+    let data
+    try {
+      data = await this.cartRepository.findOneOrFail({
+        where: {
+          id,
+        },
+        relations: ['product']
+      });
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.NOT_FOUND,
+            error: 'Data not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        throw e;
+      }
+    }
+
+    if (data.qty - 1 < 0) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          messages: 'out of stock'
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    } else {
+      await this.cartRepository.update(id, {qty: data.qty - 1});
+
+    }
+
+    // await this.cartRepository.createQueryBuilder()
+    // .update(Cart)
+    // .set({
+    //   qty: ()=> `qty - ${1}`
+    // })
+    // .where("id = :id", { id: id })
+    // .execute()
   }
 }
