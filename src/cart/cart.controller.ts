@@ -4,6 +4,8 @@ import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
+import { DecreaseDto } from './dto/decrease.dto';
+import { IncreaseDto } from './dto/increase.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { Cart } from './entities/cart.entity';
 
@@ -55,6 +57,24 @@ export class CartController {
     await this.cartService.remove(id);
 
     return {
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
+  }
+
+  @Post('increase')
+  async increaseQty(@Body() increaseDto: IncreaseDto) {
+    return{
+      data: await this.cartService.increaseQty(increaseDto),
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
+  }
+
+  @Post('decrease')
+  async decreaseQty(@Body() decreaseQty: DecreaseDto) {
+    return{
+      data: await this.cartService.decreaseQty(decreaseQty),
       statusCode: HttpStatus.OK,
       message: 'success',
     };

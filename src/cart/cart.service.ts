@@ -5,6 +5,8 @@ import { Product } from 'src/products/entities/product.entity';
 import { User } from 'src/users/entities/user.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { CreateCartDto } from './dto/create-cart.dto';
+import { DecreaseDto } from './dto/decrease.dto';
+import { IncreaseDto } from './dto/increase.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { Cart } from './entities/cart.entity';
 
@@ -61,14 +63,15 @@ export class CartService {
     cart.userId = id
     cart.product = product
     cart.qty = createCartDto.qty
-    cart.price = createCartDto.qty
+    cart.price = createCartDto.price
 
     const result = await this.cartRepository.insert(cart)
 
     return this.cartRepository.findOneOrFail({
       where: {
         id: result.identifiers[0].id,
-      },
+      }, 
+      relations: ['product']
     });
   }
 
@@ -159,5 +162,25 @@ export class CartService {
     }
 
     await this.cartRepository.delete(id);
+  }
+
+  async increaseQty(increaseDto: IncreaseDto) {
+    await this.cartRepository.createQueryBuilder()
+    .update(Cart)
+    .set({
+      qty: ()=> `qty + ${increaseDto.qty}`
+    })
+    .where("id = :id", { id: increaseDto.id })
+    .execute()
+  }
+
+  async decreaseQty(decreaseDto: DecreaseDto) {
+    await this.cartRepository.createQueryBuilder()
+    .update(Cart)
+    .set({
+      qty: ()=> `qty - ${decreaseDto.qty}`
+    })
+    .where("id = :id", { id: decreaseDto.id })
+    .execute()
   }
 }

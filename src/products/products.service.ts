@@ -128,5 +128,14 @@ export class ProductsService {
         await this.produkRepository.delete(id);
       }
 
-
+      async updateStock(id: string, stock: number) {
+        stock
+        await this.produkRepository.createQueryBuilder()
+        .update(Product)
+        .set({
+          stok: ()=> `stok - ${stock}`
+        })
+        .where("id = :id", { id: id })
+        .execute()
+      }
 }

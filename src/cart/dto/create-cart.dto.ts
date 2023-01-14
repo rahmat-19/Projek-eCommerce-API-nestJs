@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, IsUUID } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateCartDto {
     @ApiProperty()
-    @IsNotEmpty()
-    qty: number;
+    @IsOptional()
+    qty: number = 1;
 
     @ApiProperty()
     @IsNotEmpty()

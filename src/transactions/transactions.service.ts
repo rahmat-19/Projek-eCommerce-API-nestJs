@@ -3,8 +3,10 @@ import { Cron } from '@nestjs/schedule';
 import { CronExpression } from '@nestjs/schedule/dist';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+import { CartService } from 'src/cart/cart.service';
 import { deliveryStatus, paymentStatus, transactionsStatus } from 'src/constant/transactions';
 import { Product } from 'src/products/entities/product.entity';
+import { ProductsService } from 'src/products/products.service';
 import { User } from 'src/users/entities/user.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { CreateTransactionDto } from './dto/create-transactions.dto';
@@ -19,21 +21,42 @@ export class TransactionsService {
         private userRepository : Repository<User>,
         @InjectRepository(Product)
         private produkRepository : Repository<Product>,
+        private readonly cartService: CartService,
+        private readonly productService: ProductsService,
     ){}
 
-    async create(createTransactionDto: CreateTransactionDto) {
-        const selectedProduk = await this.produkRepository.findOne({where: {id: createTransactionDto.produkId}})
+    async create(createTransactionDto: CreateTransactionDto, id: string) {
+        const selectedProduct = await this.produkRepository.findOne({where: {id: createTransactionDto.productId}})
+
+        const cartUser = await this.cartService.findOne(id)
+        
+        console.log(cartUser);
 
         const order = new Transactions()
-        order.user = await this.userRepository.findOne({where: {id: createTransactionDto.userId}})
-        order.produk = selectedProduk
-        order.paymentStatus = paymentStatus.UNPAID
-        order.deliveryStatus = deliveryStatus.INIT
-        order.total = selectedProduk.price
-        order.status = transactionsStatus.INIT
-        order.expDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000))
 
+        if (cartUser) {
+          order.user = await this.userRepository.findOne({where: {id: id}})
+          order.produk = cartUser.product
+          order.paymentStatus = paymentStatus.UNPAID
+          order.deliveryStatus = deliveryStatus.INIT
+          order.total = cartUser.price
+          order.status = transactionsStatus.INIT
+          order.expDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000))
+          await this.cartService.remove(cartUser.id)
+        } else {
+          order.user = await this.userRepository.findOne({where: {id: id}})
+          order.produk = selectedProduct
+          order.paymentStatus = paymentStatus.UNPAID
+          order.deliveryStatus = deliveryStatus.INIT
+          order.total = selectedProduct.price
+          order.status = transactionsStatus.INIT
+          order.expDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000))
+        }
+        
+
+        
         const result = await this.transationRepository.insert(order)
+        await this.productService.updateStock(order.produk.id, cartUser ? cartUser.qty : 1)
         return this.transationRepository.findOneOrFail({
             where: {
             id: result.identifiers[0].id,
