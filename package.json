@@ -41,6 +41,7 @@
     "moment": "^2.29.4",
     "nestjs-paginate": "^4.6.0",
     "nestjs-pino": "^2.6.0",
+    "nestjs-typeorm-paginate": "^4.0.3",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",

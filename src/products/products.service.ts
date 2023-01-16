@@ -45,10 +45,10 @@ export class ProductsService {
         defaultSortBy: [['name', 'ASC']],
         searchableColumns: ['name'],
         defaultLimit: 5,
-        relations: ['category']
+        relations: ['category', 'user']
       })
     }
-  
+
 
       async findOne(id: string) {
         try {

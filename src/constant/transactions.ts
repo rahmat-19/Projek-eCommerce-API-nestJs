@@ -5,7 +5,8 @@ export const paymentStatus = {
 }
 
 export const deliveryStatus = {
-    INIT: 'Penjual Menyiapkan Sedang Barang/Jasa',
+    WAIT_PAYMENT: 'Menunggu Pembayaran',
+    INIT: 'Penjual Sedang Menyiapkan Barang/Jasa',
     ON_DELIVERY: 'Pesanan Sedang Dalam Pengiriman',
     SUCCESS: 'Pesanan Sudah Diterima dan Success'
 }

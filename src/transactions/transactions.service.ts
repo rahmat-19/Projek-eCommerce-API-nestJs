@@ -26,11 +26,10 @@ export class TransactionsService {
     ){}
 
     async create(createTransactionDto: CreateTransactionDto, id: string) {
+
         const selectedProduct = await this.produkRepository.findOne({where: {id: createTransactionDto.productId}})
 
-        const cartUser = await this.cartService.findOne(id)
-        
-        console.log(cartUser);
+        const cartUser = await this.cartService.findOneByUser(selectedProduct.id, id);
 
         const order = new Transactions()
 
@@ -38,7 +37,7 @@ export class TransactionsService {
           order.user = await this.userRepository.findOne({where: {id: id}})
           order.produk = cartUser.product
           order.paymentStatus = paymentStatus.UNPAID
-          order.deliveryStatus = deliveryStatus.INIT
+          order.deliveryStatus = deliveryStatus.WAIT_PAYMENT
           order.total = cartUser.price
           order.status = transactionsStatus.INIT
           order.expDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000))
@@ -47,14 +46,14 @@ export class TransactionsService {
           order.user = await this.userRepository.findOne({where: {id: id}})
           order.produk = selectedProduct
           order.paymentStatus = paymentStatus.UNPAID
-          order.deliveryStatus = deliveryStatus.INIT
+          order.deliveryStatus = deliveryStatus.WAIT_PAYMENT
           order.total = selectedProduct.price
           order.status = transactionsStatus.INIT
           order.expDate = new Date(new Date().getTime() + (24 * 60 * 60 * 1000))
         }
-        
 
-        
+
+
         const result = await this.transationRepository.insert(order)
         await this.productService.updateStock(order.produk.id, cartUser ? cartUser.qty : 1)
         return this.transationRepository.findOneOrFail({
@@ -95,7 +94,7 @@ export class TransactionsService {
         defaultLimit: 5,
       })
     }
-  
+
 
     async payment(transactionId: string){
         try {
@@ -121,6 +120,7 @@ export class TransactionsService {
 
         const transaction = new Transactions()
         transaction.paymentStatus = paymentStatus.PAID
+        transaction.deliveryStatus = deliveryStatus.INIT
 
         await this.transationRepository.update(transactionId, transaction)
       }

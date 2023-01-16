@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, ParseUUIDPipe, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -15,7 +15,7 @@ export class TransactionsController {
   @UseGuards(JwtAuthGuard)
   @Post('add')
   async create(@Request() req, @Body() createTransactionDto : CreateTransactionDto) {
-      try{          
+      try{
           return{
               data: await this.transactionsService.create(createTransactionDto, req.user.id),
               statusCode: HttpStatus.CREATED,
@@ -32,7 +32,28 @@ export class TransactionsController {
       return await this.transactionsService.findAll(query)
     } catch(e){
       console.log(e);
-        
+
     }
   }
+
+  @Put('payment/:id')
+  async payment(@Param('id', ParseUUIDPipe) id: string)
+  {
+    await this.transactionsService.payment(id)
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'success',
+
+    }
+  }
+
+  @Delete(':id')
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.transactionsService.remove(id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
+  }
+
 }

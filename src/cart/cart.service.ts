@@ -80,6 +80,7 @@ export class CartService {
   async findAll (query: PaginateQuery): Promise<Paginated<Cart>>{
     return paginate(query, this.cartRepository, {
       sortableColumns: ['createdAt'],
+      relations: ['product'],
       defaultSortBy: [['createdAt', 'ASC']],
       defaultLimit: 5,
     })
@@ -91,6 +92,33 @@ export class CartService {
         where: {
           id: id,
         },
+        relations: ['product']
+      });
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.NOT_FOUND,
+            error: 'Data not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        throw e;
+      }
+    }
+  }
+  async findOneByUser(id: string, userId: string) {
+    try {
+      return await this.cartRepository.findOneOrFail({
+        where: [
+          {
+            product: {
+              id: id
+            },
+            userId: userId
+          }
+        ],
         relations: ['product']
       });
     } catch (e) {
