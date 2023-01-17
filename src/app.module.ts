@@ -12,6 +12,7 @@ import configuration from './config/configuration';
 import { AuthModule } from './auth/auth.module';
 import { FileModule } from './file/file.module';
 import { CartModule } from './cart/cart.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { CartModule } from './cart/cart.module';
     AuthModule,
     FileModule,
     CartModule,
+    ConversationModule,
   ],
 })
 export class AppModule {}
